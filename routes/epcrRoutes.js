@@ -5,50 +5,76 @@ const db = require('../config/db');
 // @route GET - /epcrs/
 // @desc Get all EPCRs
 router.get("/", (req, res) => {
-  const patientSql = `SELECT * FROM patient 
-  LEFT JOIN patient_medication ON patient_id_medication=patient_id
-  LEFT JOIN patient_allergy ON patient_id_allergy=patient_id
-  `;
-
-  const incidentSql = `SELECT * FROM incident
-  LEFT JOIN incident_assessment ON incident_id_assessment=incident_id
-  LEFT JOIN incident_medication ON incident_id_medication=incident_id
-  LEFT JOIN incident_procedure ON incident_id_procedure=incident_id
-  `;
-
-  db.query(patientSql, (err, patientResult) => {
+  // try {
+  //   const sql = `SELECT * FROM records`;
+  //   const result = await db.query(sql);
+  //   return res.json(result);
+  // } catch (err) {
+  //   return res.json(err);
+  // }
+  const sql = `SELECT * FROM records`;
+  db.query(sql, (err, result) => {
     if (err) return res.json(err);
-
-    db.query(incidentSql, (err, incidentResult) => {
-      if (err) return res.json(err);
-
-      const combinedResults = { patientResult, incidentResult };
-      return res.json(combinedResults);
-    });
+    return res.json(result);
   });
-})
+});
 
 // @route POST - /epcrs/
 // @desc Create a new EPCR
 router.post("/", (req, res) => {
-  const sql = 'INSERT INTO books (`title`,`desc`,`cover`) VALUES (?)';
-  const values = [
-  req.body.title,
-  req.body.desc,
-  req.body.cover,
+  const sql = 'INSERT INTO records (`incident_id`, `first_name`, `middle_name`, `last_name`, `nhi_number`, `dob`, `gender`, `age`,`address`,`patient_medication`,`patient_allergy`,`incident_type`,`incident_note`,`notified_time`,`responded_time`,`located_time`,`departed_time`,`destination_time`,`location_note`,`subjective_note`,`objective_note`,`assessment_note`,`plan_note`,`vehicle`,`transport_status`,`destination`,`estimate_arrival_time`,`incident_medication`,`cardioversion`,`pacing`,`cardiac_arrest`,`rsi`,`mechanical_ventilation`,`cpap`,`sugical_cric`,`needle_decompression`,`finger_thoracostomy`,`fi_block`) VALUE(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+  const patientData = [
+    req.body.incident_id,
+    req.body.first_name,
+    req.body.middle_name,
+    req.body.last_name,
+    req.body.nhi_number,
+    req.body.dob,
+    req.body.gender,
+    req.body.age,
+    req.body.address,
+    req.body.patient_medication,
+    req.body.patient_allergy,
+    req.body.incident_type,
+    req.body.incident_note,
+    req.body.notified_time,
+    req.body.responded_time,
+    req.body.located_time,
+    req.body.departed_time,
+    req.body.destination_time,
+    req.body.location_note,
+    req.body.subjective_note,
+    req.body.objective_note,
+    req.body.assessment_note,
+    req.body.plan_note,
+    req.body.vehicle,
+    req.body.transport_status,
+    req.body.destination,
+    req.body.estimate_arrival_time,
+    req.body.incident_medication,
+    req.body.cardioversion,
+    req.body.pacing,
+    req.body.cardiac_arrest,
+    req.body.rsi,
+    req.body.mechanical_ventialation,
+    req.body.cpap,
+    req.body.sugical_cric,
+    req.body.needle_decompression,
+    req.body.finger_thoracostomy,
+    req.body.fi_block,
   ];
 
-  db.query(sql, [values], (err, result) => {
+  db.query(sql, patientData, (err, result) => {
     if (err) return res.json(err);
     return res.json(result);
-  })
-}) 
+  });
+});
   
 // @route GET - /epcrs/id
-// @desc Get an EPCR
+// @desc Get an EPCR 
 router.get("/:id", (req, res) => {
   let id = req.params.id;
-  const sql = `SELECT * FROM books WHERE id = ${id}`;
+  const sql = `SELECT * FROM records WHERE incident_id = ${id}`;
   db.query(sql, (err, result) => {
     if (err) return res.json(err);
     return res.json(result);
@@ -58,9 +84,48 @@ router.get("/:id", (req, res) => {
 // @route PUT - /epcrs/id
 // @desc Update an EPCR
 router.put("/:id", (req, res) => {
-  let id = req.params.id;
-  const sql = `UPDATE books SET title = ?, cover = ? WHERE id = ?`;
-  db.query(sql, [req.body.title,req.body.cover,id], (err, result) => {
+  const patientData = [
+    req.body.first_name,
+    req.body.middle_name,
+    req.body.last_name,
+    req.body.nhi_number,
+    req.body.dob,
+    req.body.gender,
+    req.body.age,
+    req.body.address,
+    req.body.patient_medication,
+    req.body.patient_allergy,
+    req.body.incident_type,
+    req.body.incident_note,
+    req.body.notified_time,
+    req.body.responded_time,
+    req.body.located_time,
+    req.body.departed_time,
+    req.body.destination_time,
+    req.body.location_note,
+    req.body.subjective_note,
+    req.body.objective_note,
+    req.body.assessment_note,
+    req.body.plan_note,
+    req.body.vehicle,
+    req.body.transport_status,
+    req.body.destination,
+    req.body.estimate_arrival_time,
+    req.body.incident_medication,
+    req.body.cardioversion,
+    req.body.pacing,
+    req.body.cardiac_arrest,
+    req.body.rsi,
+    req.body.mechanical_ventialation,
+    req.body.cpap,
+    req.body.sugical_cric,
+    req.body.needle_decompression,
+    req.body.finger_thoracostomy,
+    req.body.fi_block,
+    req.body.incident_id,
+  ];
+  const sql = `UPDATE records SET first_name = ?, middle_name = ?, last_name = ?, nhi_number = ?, dob = ?, gender = ?, age = ?, address = ?, patient_medication = ?, patient_allergy = ?, incident_type = ?, incident_note = ?, notified_time = ?, responded_time = ?, located_time = ?, departed_time = ?, destination_time = ?, location_note = ?, subjective_note = ?, objective_note = ?, assessment_note = ?, plan_note = ?, vehicle = ?, transport_status = ?, destination = ?, estimate_arrival_time = ?, incident_medication = ?, cardioversion = ?, pacing = ?, cardiac_arrest = ?, rsi = ?, mechanical_ventilation = ?, cpap = ?, sugical_cric = ?, needle_decompression = ?, finger_thoracostomy = ?, fi_block = ? WHERE incident_id = ?`;
+  db.query(sql, patientData, (err, result) => {
     if (err) return res.json(err);
     return res.json(result);
   })
