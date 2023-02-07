@@ -6,7 +6,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 // Routes
-app.use("/ecprs", require("./routes/ecprRoutes"));
+app.use("/epcrs", require("./routes/epcrRoutes"));
 // Server
 const PORT = process.env.PORT||3000;
 app.listen(PORT, () => {
