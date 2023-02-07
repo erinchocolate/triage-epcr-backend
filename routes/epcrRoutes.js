@@ -5,11 +5,27 @@ const db = require('../config/db');
 // @route GET - /epcrs/
 // @desc Get all EPCRs
 router.get("/", (req, res) => {
-  const sql = 'SELECT * FROM patient';
-  db.query(sql, (err, result) => {
+  const patientSql = `SELECT * FROM patient 
+  LEFT JOIN patient_medication ON patient_id_medication=patient_id
+  LEFT JOIN patient_allergy ON patient_id_allergy=patient_id
+  `;
+
+  const incidentSql = `SELECT * FROM incident
+  LEFT JOIN incident_assessment ON incident_id_assessment=incident_id
+  LEFT JOIN incident_medication ON incident_id_medication=incident_id
+  LEFT JOIN incident_procedure ON incident_id_procedure=incident_id
+  `;
+
+  db.query(patientSql, (err, patientResult) => {
     if (err) return res.json(err);
-    return res.json(result);
-  })
+
+    db.query(incidentSql, (err, incidentResult) => {
+      if (err) return res.json(err);
+
+      const combinedResults = { patientResult, incidentResult };
+      return res.json(combinedResults);
+    });
+  });
 })
 
 // @route POST - /epcrs/
