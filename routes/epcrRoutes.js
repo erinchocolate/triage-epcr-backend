@@ -5,13 +5,6 @@ const db = require('../config/db');
 // @route GET - /epcrs/
 // @desc Get all EPCRs
 router.get("/", (req, res) => {
-  // try {
-  //   const sql = `SELECT * FROM records`;
-  //   const result = await db.query(sql);
-  //   return res.json(result);
-  // } catch (err) {
-  //   return res.json(err);
-  // }
   const sql = `SELECT * FROM records`;
   db.query(sql, (err, result) => {
     if (err) return res.json(err);
@@ -66,7 +59,8 @@ router.post("/", (req, res) => {
 
   db.query(sql, patientData, (err, result) => {
     if (err) return res.json(err);
-    return res.json(result);
+    const insertedIncidentId = result.insertId;
+    return res.json(insertedIncidentId);
   });
 });
   
@@ -84,6 +78,7 @@ router.get("/:id", (req, res) => {
 // @route PUT - /epcrs/id
 // @desc Update an EPCR
 router.put("/:id", (req, res) => {
+  let id = req.params.id;
   const patientData = [
     req.body.first_name,
     req.body.middle_name,
@@ -122,9 +117,8 @@ router.put("/:id", (req, res) => {
     req.body.needle_decompression,
     req.body.finger_thoracostomy,
     req.body.fi_block,
-    req.body.incident_id,
   ];
-  const sql = `UPDATE records SET first_name = ?, middle_name = ?, last_name = ?, nhi_number = ?, dob = ?, gender = ?, age = ?, address = ?, patient_medication = ?, patient_allergy = ?, incident_type = ?, incident_note = ?, notified_time = ?, responded_time = ?, located_time = ?, departed_time = ?, destination_time = ?, location_note = ?, subjective_note = ?, objective_note = ?, assessment_note = ?, plan_note = ?, vehicle = ?, transport_status = ?, destination = ?, estimate_arrival_time = ?, incident_medication = ?, cardioversion = ?, pacing = ?, cardiac_arrest = ?, rsi = ?, mechanical_ventilation = ?, cpap = ?, sugical_cric = ?, needle_decompression = ?, finger_thoracostomy = ?, fi_block = ? WHERE incident_id = ?`;
+  const sql = `UPDATE records SET first_name = ?, middle_name = ?, last_name = ?, nhi_number = ?, dob = ?, gender = ?, age = ?, address = ?, patient_medication = ?, patient_allergy = ?, incident_type = ?, incident_note = ?, notified_time = ?, responded_time = ?, located_time = ?, departed_time = ?, destination_time = ?, location_note = ?, subjective_note = ?, objective_note = ?, assessment_note = ?, plan_note = ?, vehicle = ?, transport_status = ?, destination = ?, estimate_arrival_time = ?, incident_medication = ?, cardioversion = ?, pacing = ?, cardiac_arrest = ?, rsi = ?, mechanical_ventilation = ?, cpap = ?, sugical_cric = ?, needle_decompression = ?, finger_thoracostomy = ?, fi_block = ? WHERE incident_id = ${id}`;
   db.query(sql, patientData, (err, result) => {
     if (err) return res.json(err);
     return res.json(result);
